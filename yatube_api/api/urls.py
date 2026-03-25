@@ -8,6 +8,6 @@ router.register(r'posts', views.PostViewSet, basename='posts')
 router.register(r'groups', views.GroupViewSet, basename='groups')
 
 urlpatterns = [
-    path('v1/api-token-auth/', token_views.obtain_auth_token, name='api_token_auth'),
+    path('v1/api-token-auth/', token_views.obtain_auth_token),
     path('v1/', include(router.urls)),
 ]
