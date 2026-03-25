@@ -1,16 +1,14 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from posts.models import Post, Group, Comment
 from .serializers import PostSerializer, GroupSerializer, CommentSerializer
-from .permissions import IsAuthorOrReadOnly
 
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    # permission_classes не переопределяем, используется глобальная настройка IsAuthenticated
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -27,7 +25,6 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get', 'post'])
     def comments(self, request, pk=None):
-        # Здесь также наследуются права от вьюсета — только аутентифицированные
         post = self.get_object()
         if request.method == 'GET':
             comments = post.comments.all()
@@ -52,7 +49,6 @@ class PostViewSet(viewsets.ModelViewSet):
         url_path='comments/(?P<comment_id>[^/.]+)'
     )
     def comment_detail(self, request, pk=None, comment_id=None):
-        # Наследует права от вьюсета
         post = self.get_object()
         try:
             comment = post.comments.get(pk=comment_id)
